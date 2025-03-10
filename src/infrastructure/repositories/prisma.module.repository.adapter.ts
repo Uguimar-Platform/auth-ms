@@ -27,9 +27,29 @@ export class PrismaModuleRepositoryAdapter implements ModuleRepositoryPort {
     const createdModule = await this.prisma.module.create({
       data: module,
     });
-   
+
     return {
       ...createdModule,
     } as ModuleModel;
+  }
+
+  /**
+   * 
+   * @param id The id of the module to be found. 
+   * @returns The module found.
+   */
+
+  async findModuleById(id: number): Promise<ModuleModel> {
+    const module = await this.prisma.module.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!module) {
+      throw new Error('Module not found');
+    }
+
+    return module as ModuleModel;
   }
 }
