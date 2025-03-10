@@ -21,8 +21,8 @@ model User {
   lastName  String?  @db.VarChar(255)
   phone     String?  @db.VarChar(15)
   address   String?  @db.VarChar(300)
-  //role      Role     @relation(fields: [roleId], references: [id])
-  //roleId    Int
+  role      Role     @relation(fields: [roleId], references: [id])
+  roleId    Int
   
   //refreshTokens RefreshToken[]
 
@@ -32,4 +32,62 @@ model User {
 
   @@map("users")
 }
+
+
+model Module {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  permissions Permission[] 
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime?    
+  status      Int          @default(0)
+
+  @@map("modules")
+}
+
+model Permission {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique @db.VarChar(255)
+  slug        String?      @db.VarChar(255)  
+  moduleId    Int          
+  module      Module       @relation(fields: [moduleId], references: [id])  
+  
+  rolePermissions RolePermission[] 
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  status      Int          @default(0)
+
+  @@map("permissions")
+}
+
+model Role {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique @db.VarChar(255)
+  rolePermissions RolePermission[]  
+  users       User[]
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  status      Int          @default(0)
+
+  @@map("roles")
+}
+
+model RolePermission {  
+  id          Int       @id @default(autoincrement())
+  roleId      Int      
+  permissionId Int      
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  role        Role      @relation(fields: [roleId], references: [id]) 
+  permission  Permission @relation(fields: [permissionId], references: [id])
+
+  @@unique([roleId, permissionId]) 
+
+  @@map("role_permissions")
+}
+
 

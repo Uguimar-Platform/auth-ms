@@ -3,7 +3,7 @@ import { UserModel } from 'src/domain/models/user.model';
 import { UserRepositoryPort } from 'src/domain/repositories/user.repository.port';
 
 @Injectable()
-export class CreateUserUseCase {
+export class RegisterUserUseCase {
   constructor(
     @Inject('UserRepository') private userRepository: UserRepositoryPort,
   ) {}

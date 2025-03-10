@@ -2,21 +2,21 @@
 https://docs.nestjs.com/controllers#controllers
 */
 
-import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
-import { CreateUserUseCase } from 'src/application/use-cases/create-user.usecase';
-import { CreateUserDTO } from '../dto/create-user.dto';
+import { Controller, HttpStatus, Post, Res } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { RegisterUserDto } from '../dto/register-user.dto';
+import { RegisterUserUseCase } from 'src/application/use-cases/users/register-user.usecase';
 
 @Controller()
 export class UserController {
-  constructor(private readonly createUserUseCase: CreateUserUseCase) {}
+  constructor(private readonly registerUserUseCase: RegisterUserUseCase) {}
 
   @MessagePattern('auth.register.user')
-  async createAuthor(
-    @Res() request,
-    @Payload() user: CreateUserDTO,
-  ): Promise<any> {
-    const authorCreated = await this.createUserUseCase.execute(user);
-    return request.status(HttpStatus.CREATED).json(authorCreated);
+  async createAuthor(@Payload() user: RegisterUserDto) {
+    const userCreated = await this.registerUserUseCase.execute(user);
+    return {
+      status: HttpStatus.CREATED,
+      data: userCreated,
+    };
   }
 }
