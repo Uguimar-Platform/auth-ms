@@ -1,10 +1,12 @@
 import { Inject, Injectable, HttpStatus } from '@nestjs/common';
 import { stat } from 'fs';
 import { ModuleModel } from 'src/domain/models/module.model';
+import { PaginatedModuleModel } from 'src/domain/models/paginated.model';
 import { ModuleRepositoryPort } from 'src/domain/repositories/module.repository.port';
+import { ModuleFilterDto } from 'src/infrastructure/dto/module-filter.dto';
 
 @Injectable()
-export class CreateModuleUseCase {
+export class ListModulePaginatedUseCase {
   /**
    *
    * @param moduleRepository  Repository to inject into providers
@@ -12,7 +14,6 @@ export class CreateModuleUseCase {
   constructor(
     @Inject('ModuleRepository') private moduleRepository: ModuleRepositoryPort,
   ) {}
-
 
   /**
    * Method that implements the logic to create a module.
@@ -22,12 +23,12 @@ export class CreateModuleUseCase {
    * @returns The status and a message indicating that the module was created successfully.
    */
 
-  async execute(module: ModuleModel) {
-    const moduleexecute = await this.moduleRepository.createModule(module);
-    console.log('usecase',moduleexecute);
+  async execute(filter: ModuleFilterDto) {
+    const moduleexecute =
+      await this.moduleRepository.listModulePaginated(filter);
     return {
-      status: HttpStatus.CREATED,
-      message: 'Module created successfully',
+      status: HttpStatus.OK,
+      data: moduleexecute,
     };
   }
 }
