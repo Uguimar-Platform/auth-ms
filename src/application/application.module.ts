@@ -14,6 +14,10 @@ import { PrismaModuleRepositoryAdapter } from 'src/infrastructure/repositories/p
 import { DomainModule } from 'src/domain/domain.module';
 import { LoginUserUseCase } from './use-cases/users/login.usecase';
 import { log } from 'console';
+import { FindModuleByIdUseCase } from './use-cases/modules/find-module-by-id.usecase';
+import { UpdateModuleUseCase } from './use-cases/modules/update-module.usecase';
+import { UpdateStatusModuleUseCase } from './use-cases/modules/update-status.usecase';
+import { ListModulePaginatedUseCase } from './use-cases/modules/list-module-paginated.usecase';
 /**
  * Module that groups all the application dependencies.
  */
@@ -55,7 +59,7 @@ import { log } from 'console';
     CreateRoleUseCase,
     CreatePermissionsUseCase,
     CreateModuleUseCase,
-    LoginUserUseCase
+    LoginUserUseCase,
     FindModuleByIdUseCase,
     UpdateModuleUseCase,
     UpdateStatusModuleUseCase,
