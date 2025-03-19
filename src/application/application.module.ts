@@ -11,15 +11,14 @@ import { CreatePermissionsUseCase } from './use-cases/permissions/create-permiss
 import { CreateModuleUseCase } from './use-cases/modules/create-module.usecase';
 import { RegisterUserUseCase } from './use-cases/users/register-user.usecase';
 import { PrismaModuleRepositoryAdapter } from 'src/infrastructure/repositories/prisma.module.repository.adapter';
-import { FindModuleByIdUseCase } from './use-cases/modules/find-module-by-id.usecase';
-import { UpdateModuleUseCase } from './use-cases/modules/update-module.usecase';
-import { UpdateStatusModuleUseCase } from './use-cases/modules/update-status.usecase';
-import { ListModulePaginatedUseCase } from './use-cases/modules/list-module-paginated.usecase';
+import { DomainModule } from 'src/domain/domain.module';
+import { LoginUserUseCase } from './use-cases/users/login.usecase';
+import { log } from 'console';
 /**
  * Module that groups all the application dependencies.
  */
 @Module({
-  imports: [],
+  imports: [DomainModule],
   providers: [
     {
       provide: PrismaClient,
@@ -41,6 +40,7 @@ import { ListModulePaginatedUseCase } from './use-cases/modules/list-module-pagi
       useClass: PrismaPermissionRepositoryAdapter,
     },
     CreateModuleUseCase,
+    LoginUserUseCase,
     FindModuleByIdUseCase,
     UpdateModuleUseCase,
     UpdateStatusModuleUseCase,
@@ -55,6 +55,7 @@ import { ListModulePaginatedUseCase } from './use-cases/modules/list-module-pagi
     CreateRoleUseCase,
     CreatePermissionsUseCase,
     CreateModuleUseCase,
+    LoginUserUseCase
     FindModuleByIdUseCase,
     UpdateModuleUseCase,
     UpdateStatusModuleUseCase,
