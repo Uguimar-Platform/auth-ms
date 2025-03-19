@@ -41,6 +41,10 @@ import { log } from 'console';
     },
     CreateModuleUseCase,
     LoginUserUseCase,
+    FindModuleByIdUseCase,
+    UpdateModuleUseCase,
+    UpdateStatusModuleUseCase,
+    ListModulePaginatedUseCase,
     {
       provide: 'ModuleRepository',
       useClass: PrismaModuleRepositoryAdapter,
@@ -52,6 +56,10 @@ import { log } from 'console';
     CreatePermissionsUseCase,
     CreateModuleUseCase,
     LoginUserUseCase
+    FindModuleByIdUseCase,
+    UpdateModuleUseCase,
+    UpdateStatusModuleUseCase,
+    ListModulePaginatedUseCase
   ],
 })
 export class ApplicationModule {}

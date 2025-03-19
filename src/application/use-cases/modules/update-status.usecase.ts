@@ -1,10 +1,9 @@
 import { Inject, Injectable, HttpStatus } from '@nestjs/common';
-import { stat } from 'fs';
 import { ModuleModel } from 'src/domain/models/module.model';
 import { ModuleRepositoryPort } from 'src/domain/repositories/module.repository.port';
 
 @Injectable()
-export class CreateModuleUseCase {
+export class UpdateStatusModuleUseCase {
   /**
    *
    * @param moduleRepository  Repository to inject into providers
@@ -21,13 +20,16 @@ export class CreateModuleUseCase {
    * @param module The module to be created.
    * @returns The status and a message indicating that the module was created successfully.
    */
-
-  async execute(module: ModuleModel) {
-    const moduleexecute = await this.moduleRepository.createModule(module);
+ 
+  async execute(id: number, status: number) {
+    const moduleexecute = await this.moduleRepository.updateModuleStatus(
+      id,
+      status,
+    );
     console.log('usecase',moduleexecute);
     return {
       status: HttpStatus.CREATED,
-      message: 'Module created successfully',
+      message: 'Module changed status successfully',
     };
   }
 }
