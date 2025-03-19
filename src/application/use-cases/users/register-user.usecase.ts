@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { UserModel } from 'src/domain/models/user.model';
 import { UserRepositoryPort } from 'src/domain/repositories/user.repository.port';
 
@@ -8,15 +8,12 @@ export class RegisterUserUseCase {
     @Inject('UserRepository') private userRepository: UserRepositoryPort,
   ) {}
 
-  /*async execute(user:UserModel):Promise<UserModel>{ 
-       const createdUser = await this.userRepository.createUser(user);
-        return createdUser; 
-
-        return 'createdUser';
-
-    }*/
 
   async execute(user:UserModel){ 
-        return 'createdUser';
+        await this.userRepository.createUser(user);
+        return {
+          status: HttpStatus.CREATED,
+          message: 'User created successfully',
+        };
     }
 }

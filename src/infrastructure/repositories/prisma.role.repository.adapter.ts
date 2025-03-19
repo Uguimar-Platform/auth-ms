@@ -1,9 +1,8 @@
 
 import { Injectable } from "@nestjs/common";
-import { UserModel } from "src/domain/models/user.model";
-import { PrismaClient } from '@prisma/client';
 import { RoleRepositoryPort } from "src/domain/repositories/role.repository.port";
 import { RoleModel } from "src/domain/models/role.model";
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()    
 export class PrismaRoleRepositoryAdapter implements RoleRepositoryPort {

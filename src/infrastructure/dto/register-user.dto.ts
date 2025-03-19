@@ -40,6 +40,7 @@ export class RegisterUserDto {
   @IsNumber()
   status: number;
 
+
   @IsOptional()
   createdAt: Date;
 
