@@ -23,8 +23,7 @@ export class CreateModuleUseCase {
    */
 
   async execute(module: ModuleModel) {
-    const moduleexecute = await this.moduleRepository.createModule(module);
-    console.log('usecase',moduleexecute);
+    await this.moduleRepository.createModule(module);
     return {
       status: HttpStatus.CREATED,
       message: 'Module created successfully',

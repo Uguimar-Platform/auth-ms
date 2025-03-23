@@ -18,6 +18,10 @@ import { FindModuleByIdUseCase } from './use-cases/modules/find-module-by-id.use
 import { UpdateModuleUseCase } from './use-cases/modules/update-module.usecase';
 import { UpdateStatusModuleUseCase } from './use-cases/modules/update-status.usecase';
 import { ListModulePaginatedUseCase } from './use-cases/modules/list-module-paginated.usecase';
+import { FindRoleByIdUseCase } from './use-cases/roles/find-role-by-id.usecase';
+import { ListRolesPaginatedUseCase } from './use-cases/roles/list-roles-paginated.usecase';
+import { UpdateRoleUseCase } from './use-cases/roles/update-role.usecase';
+import { UpdateStatusRoleUseCase } from './use-cases/roles/update-status.usecase';
 /**
  * Module that groups all the application dependencies.
  */
@@ -34,6 +38,10 @@ import { ListModulePaginatedUseCase } from './use-cases/modules/list-module-pagi
       useClass: PrismaUserRepositoryAdapter,
     },
     CreateRoleUseCase,
+    FindRoleByIdUseCase,
+    ListRolesPaginatedUseCase,
+    UpdateRoleUseCase,
+    UpdateStatusRoleUseCase,
     {
       provide: 'RoleRepository',
       useClass: PrismaUserRepositoryAdapter,
@@ -63,7 +71,12 @@ import { ListModulePaginatedUseCase } from './use-cases/modules/list-module-pagi
     FindModuleByIdUseCase,
     UpdateModuleUseCase,
     UpdateStatusModuleUseCase,
-    ListModulePaginatedUseCase
+    ListModulePaginatedUseCase,
+    CreateRoleUseCase,
+    FindRoleByIdUseCase,
+    ListRolesPaginatedUseCase,
+    UpdateRoleUseCase,
+    UpdateStatusRoleUseCase
   ],
 })
 export class ApplicationModule {}
