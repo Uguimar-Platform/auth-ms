@@ -8,8 +8,8 @@ export class UpdateRoleUseCase {
     @Inject('RoleRepository') private roleRepository: RoleRepositoryPort,
   ) {}
 
-  async execute(id: number, updateRole: RoleModel) {
-    await this.roleRepository.updateRole(id, updateRole);
+  async execute(id: number, role: Partial<RoleModel>) {
+    await this.roleRepository.updateRole(id, role);
     return {
       status: HttpStatus.OK,
       message: 'Role updated successfully',

@@ -4,4 +4,8 @@ export interface PermissionsModel {
   slug: string;
   moduleId: number;
   status: number;
+  page?: number;
+  limit?: number;
+  createdAt?: Date;
+  updatedAt?: Date | null;
 }

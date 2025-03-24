@@ -1,6 +1,6 @@
-import { ModuleFilterDto } from "src/infrastructure/dto/module-filter.dto";
+import { ModuleFilterDto } from "src/infrastructure/dto/modules/module-filter.dto";
 import { ModuleModel } from "../models/module.model";
-import { PaginatedModuleModel } from "../models/paginated.model";
+import { PaginatedFilterDto } from "src/infrastructure/dto/list-module.filter.dto";
 
 /**
  * Interface that represents the module repository port.
@@ -9,9 +9,9 @@ import { PaginatedModuleModel } from "../models/paginated.model";
  */
 
 export interface ModuleRepositoryPort {
-  createModule(module: ModuleModel): Promise<ModuleModel>;
-  findModuleById(id: number): Promise<ModuleModel>;
-  updateModule(id: number, module: ModuleModel): Promise<ModuleModel>;
-  updateModuleStatus(id: number, status: number): Promise<ModuleModel>;
-  listModulePaginated(filter: ModuleFilterDto): Promise<PaginatedModuleModel>;
+  createModule(module: ModuleModel);
+  findModuleById(id: number);
+  updateModule(id: number, module: ModuleModel);
+  updateModuleStatus(id: number, status: number);
+  listModulePaginated(filter: PaginatedFilterDto);
 }

@@ -2,8 +2,8 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { PrismaClient } from '@prisma/client';
 import { ModuleModel } from 'src/domain/models/module.model';
-import { PaginatedModuleModel } from 'src/domain/models/paginated.model';
 import { ModuleRepositoryPort } from 'src/domain/repositories/module.repository.port';
+import { PaginatedFilterDto } from '../dto/list-module.filter.dto';
 
 /**
  * Adapter to the module repository using Prisma.
@@ -25,14 +25,12 @@ export class PrismaModuleRepositoryAdapter implements ModuleRepositoryPort {
    * @returns The created module.
    */
 
-  async createModule(module: ModuleModel): Promise<ModuleModel> {
+  async createModule(module: ModuleModel) {
     const createdModule = await this.prisma.module.create({
       data: module,
     });
 
-    return {
-      ...createdModule,
-    } as ModuleModel;
+    return createdModule;
   }
 
   /**
@@ -41,7 +39,7 @@ export class PrismaModuleRepositoryAdapter implements ModuleRepositoryPort {
    * @returns The module found.
    */
 
-  async findModuleById(id: number): Promise<ModuleModel> {
+  async findModuleById(id: number) {
     const module = await this.prisma.module.findUnique({
       where: {
         id,
@@ -52,10 +50,10 @@ export class PrismaModuleRepositoryAdapter implements ModuleRepositoryPort {
       throw new Error('Module not found');
     }
 
-    return module as ModuleModel;
+    return module;
   }
 
-  async updateModule(id: number, module: ModuleModel): Promise<ModuleModel> {
+  async updateModule(id: number, module: ModuleModel) {
     const updatedModule = await this.prisma.module.update({
       where: { id },
       data: {
@@ -64,10 +62,10 @@ export class PrismaModuleRepositoryAdapter implements ModuleRepositoryPort {
       },
     });
 
-    return updatedModule as ModuleModel;
+    return updatedModule;
   }
 
-  async updateModuleStatus(id: number, status: number): Promise<ModuleModel> {
+  async updateModuleStatus(id: number, status: number) {
     try {
       const module = await this.prisma.module.findUnique({
         where: { id },
@@ -88,7 +86,7 @@ export class PrismaModuleRepositoryAdapter implements ModuleRepositoryPort {
         },
       });
 
-      return updatemoduleStatus as ModuleModel;
+      return updatemoduleStatus;
     } catch (error) {
       throw new RpcException({
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -97,10 +95,8 @@ export class PrismaModuleRepositoryAdapter implements ModuleRepositoryPort {
     }
   }
 
-  async listModulePaginated(
-    module: ModuleModel,
-  ): Promise<PaginatedModuleModel> {
-    const { page, limit } = module;
+  async listModulePaginated(filter: PaginatedFilterDto) {
+    const { page, limit } = filter;
 
     const totalItems = await this.prisma.module.count();
     const currentPage = page ?? 1;

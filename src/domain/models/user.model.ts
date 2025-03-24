@@ -10,4 +10,6 @@ export interface UserModel {
   createdAt?: Date;
   updatedAt?: Date;
   status?: number;
+  page?: number;
+  limit?: number;
 }

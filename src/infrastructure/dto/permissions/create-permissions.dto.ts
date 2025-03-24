@@ -4,7 +4,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-export class CreateRoleDto {
+export class CreatePermissionDto {
   @IsOptional()
   id: number;
 
@@ -12,12 +12,18 @@ export class CreateRoleDto {
   @IsNotEmpty()
   name: string;
 
+  @IsString()
+  @IsNotEmpty()
+  slug: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  moduleId: number;
+
   @IsNotEmpty()
   @IsNumber()
   status: number;
 
-  @IsOptional()
-  createdAt: Date;
 
   @IsOptional()
   updatedAt?: Date;

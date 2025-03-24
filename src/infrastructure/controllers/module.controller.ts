@@ -1,13 +1,13 @@
 import { Controller, HttpStatus, ParseIntPipe } from "@nestjs/common";
 import { MessagePattern, Payload } from "@nestjs/microservices";
 import { CreateModuleUseCase } from "src/application/use-cases/modules/create-module.usecase";
-import { CreateModuleDto } from "../dto/create-module.dto";
+import { CreateModuleDto } from "../dto/modules/create-module.dto";
 import { FindModuleByIdUseCase } from "src/application/use-cases/modules/find-module-by-id.usecase";
 import { UpdateModuleUseCase } from "src/application/use-cases/modules/update-module.usecase";
-import { UpdateModuleDto } from "../dto/update-module.dto";
+import { UpdateModuleDto } from "../dto/modules/update-module.dto";
 import { UpdateStatusModuleUseCase } from "src/application/use-cases/modules/update-status.usecase";
-import { ModuleFilterDto } from "../dto/module-filter.dto";
 import { ListModulePaginatedUseCase } from "src/application/use-cases/modules/list-module-paginated.usecase";
+import { PaginatedFilterDto } from "../dto/list-module.filter.dto";
 
 
 @Controller()
@@ -61,7 +61,7 @@ export class ModuleController {
   }
 
   @MessagePattern({ cmd: 'list_module_paginated' })
-  async list(@Payload() paginated: ModuleFilterDto) {
+  async list(@Payload() paginated: PaginatedFilterDto) {
     return await this.listModulePaginatedUseCase.execute(paginated);
   }
 }

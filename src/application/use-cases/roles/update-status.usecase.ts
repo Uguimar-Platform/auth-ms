@@ -21,7 +21,7 @@ export class UpdateStatusRoleUseCase {
    */
  
   async execute(id: number, status: number) {
-    const roleexecute = await this.roleRepository.updateRoleStatus(
+    await this.roleRepository.updateRoleStatus(
       id,
       status,
     );

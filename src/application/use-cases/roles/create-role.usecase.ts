@@ -10,9 +10,9 @@ export class CreateRoleUseCase {
 
 
 
-
   async execute(role:RoleModel){
-    await this.roleRepository.createRole(role);
+   await this.roleRepository.createRole(role);
+  
     return{
       status: HttpStatus.CREATED,
       message: 'Role created successfully',

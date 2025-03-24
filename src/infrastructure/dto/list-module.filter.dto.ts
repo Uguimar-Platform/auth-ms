@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class ModuleFilterDto {
+export class PaginatedFilterDto {
   @IsPositive()
   @IsOptional()
   @Type(() => Number)

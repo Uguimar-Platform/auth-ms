@@ -1,9 +1,10 @@
+import { PaginatedFilterDto } from 'src/infrastructure/dto/list-module.filter.dto';
 import { PermissionsModel } from '../models/permissions.model';
 
 export interface PermissionsRepositoryPort {
-  createPermission(permisison: PermissionsModel);
+  createPermission(permission: PermissionsModel);
   findPermissionById(id: number);
-  updatePermission(id: number, module: PermissionsModel);
+  updatePermission(id: number, permission: Partial<PermissionsModel>);
   updatePermissionStatus(id: number, status: number);
-  listPermissionPaginated(filter: PermissionsModel);
+  listPermissionPaginated(filter: PaginatedFilterDto);
 }

@@ -1,16 +1,17 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { RoleRepositoryPort } from "src/domain/repositories/role.repository.port";
+import { UserModel } from "src/domain/models/user.model";
+import { UserRepositoryPort } from "src/domain/repositories/user.repository.port";
 import { PaginatedFilterDto } from "src/infrastructure/dto/list-module.filter.dto";
 
 @Injectable()
-export class ListRolesPaginatedUseCase {
+export class ListUserPaginatedUseCase {
   /**
    *
    * @param roleRepository  Repository to inject into providers
    *    */
   constructor(
-    @Inject('RoleRepository') private roleRepository: RoleRepositoryPort,
-  ) {}
+     @Inject('UserRepository') private userRepository: UserRepositoryPort,
+   ) {}
 
   /**
    * Method that implements the logic to create a module.
@@ -22,7 +23,7 @@ export class ListRolesPaginatedUseCase {
 
   async execute(filter: PaginatedFilterDto) {
     const roleexecute =
-      await this.roleRepository.listRolePaginated(filter);
+      await this.userRepository.listUserPaginated(filter);
     return {
       status: HttpStatus.OK,
       data: roleexecute,
