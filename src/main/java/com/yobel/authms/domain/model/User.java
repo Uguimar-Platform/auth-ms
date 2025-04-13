@@ -17,6 +17,7 @@ public class User {
     private String username;
     private String email;
     private String password;
+    @Builder.Default
     private Set<Role> roles = new HashSet<>();
     private boolean enabled;
 
