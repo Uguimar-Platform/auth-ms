@@ -1,10 +1,10 @@
 package com.yobel.authms.application.service;
 
 import com.yobel.authms.application.port.input.TokenValidationUseCase;
-import com.yobel.authms.application.port.output.TokenRepository;
 import com.yobel.authms.application.port.output.UserRepository;
 import com.yobel.authms.domain.exception.InvalidTokenException;
 import com.yobel.authms.domain.model.User;
+import com.yobel.authms.infrastructure.output.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -14,7 +14,6 @@ import reactor.core.publisher.Mono;
 public class TokenValidationService implements TokenValidationUseCase {
 
     private final JwtProvider jwtProvider;
-    private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
 
     @Override
