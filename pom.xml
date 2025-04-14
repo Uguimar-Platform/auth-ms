@@ -8,7 +8,7 @@
         <version>3.4.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.yobel</groupId>
+    <groupId>com.uguimar</groupId>
     <artifactId>auth-ms</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>auth-ms</name>
