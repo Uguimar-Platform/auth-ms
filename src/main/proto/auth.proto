@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package com.yobel.authms.grpc;
+package com.uguimar.authms.grpc;
 
 option java_multiple_files = true;
-option java_package = "com.yobel.authms.grpc";
+option java_package = "com.uguimar.authms.grpc";
 
 service AuthService {
   rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse) {}
