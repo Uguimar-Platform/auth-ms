@@ -1,0 +1,59 @@
+package com.yobel.authms.infrastructure.output.persistence.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
+import java.util.Set;
+import java.util.UUID;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table("users")
+public class UserEntity implements Persistable<String> {
+
+    @Id
+    private String id;
+
+    @Column("username")
+    private String username;
+
+    @Column("email")
+    private String email;
+
+    @Column("password")
+    private String password;
+
+    @Column("enabled")
+    private boolean enabled;
+
+    @Transient
+    private Set<RoleEntity> roles;
+
+    @Transient
+    private boolean isNew;
+
+    @Override
+    public boolean isNew() {
+        return isNew || id == null;
+    }
+
+    public void markNew() {
+        this.isNew = true;
+    }
+
+    public static UserEntity newUser() {
+        UserEntity user = new UserEntity();
+        user.setId(UUID.randomUUID().toString());
+        user.markNew();
+        return user;
+    }
+}
