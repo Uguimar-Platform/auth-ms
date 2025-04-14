@@ -6,6 +6,7 @@ import com.yobel.authms.application.port.output.TokenRepository;
 import com.yobel.authms.application.port.output.UserRepository;
 import com.yobel.authms.domain.exception.AuthenticationException;
 import com.yobel.authms.domain.model.Token;
+import com.yobel.authms.domain.model.TokenPair;
 import com.yobel.authms.domain.model.TokenType;
 import com.yobel.authms.infrastructure.output.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class AuthenticationService implements AuthenticationUseCase {
     private final JwtProvider jwtProvider;
 
     @Override
-    public Mono<Token> login(String username, String password) {
+    public Mono<TokenPair> login(String username, String password) {
         return userRepository.findByUsername(username)
                 .switchIfEmpty(Mono.error(new AuthenticationException("Usuario no encontrado")))
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
@@ -50,7 +51,10 @@ public class AuthenticationService implements AuthenticationUseCase {
 
                     return tokenRepository.save(accessToken)
                             .then(tokenRepository.save(refreshToken))
-                            .thenReturn(accessToken);
+                            .thenReturn(TokenPair.builder()
+                                    .accessToken(accessToken)
+                                    .refreshToken(refreshToken)
+                                    .build());
                 });
     }
 

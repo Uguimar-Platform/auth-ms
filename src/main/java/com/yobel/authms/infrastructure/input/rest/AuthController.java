@@ -30,12 +30,14 @@ public class AuthController {
     @PostMapping("/login")
     public Mono<ResponseEntity<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
         return authenticationUseCase.login(request.getUsername(), request.getPassword())
-                .flatMap(accessToken -> {
+                .map(tokenPair -> {
                     LoginResponse response = LoginResponse.builder()
-                            .accessToken(accessToken.getValue())
-                            .expiryDate(accessToken.getExpiryDate())
+                            .accessToken(tokenPair.getAccessToken().getValue())
+                            .refreshToken(tokenPair.getRefreshToken().getValue())
+                            .expiryDate(tokenPair.getAccessToken().getExpiryDate())
+                            .tokenType("Bearer")
                             .build();
-                    return Mono.just(ResponseEntity.ok(response));
+                    return ResponseEntity.ok(response);
                 })
                 .onErrorResume(AuthenticationException.class, e -> {
                     log.error("Error de autenticación: {}", e.getMessage());

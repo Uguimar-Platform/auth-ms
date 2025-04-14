@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .securityContextRepository(securityContextRepository)
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(HttpMethod.OPTIONS).permitAll()
-                        .pathMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                        .pathMatchers("/api/auth/login", "/api/auth/register", "/api/auth/refresh").permitAll()
                         .pathMatchers("/api/health").permitAll()
                         .pathMatchers("/actuator/**").permitAll()
                         .pathMatchers("/api/auth/**").authenticated()
