@@ -35,6 +35,18 @@ public class UserEntity implements Persistable<String> {
     @Column("enabled")
     private boolean enabled;
 
+    @Column("first_name")
+    private String firstName;
+
+    @Column("last_name")
+    private String lastName;
+
+    @Column("age")
+    private Integer age;
+
+    @Column("photo_url")
+    private String photoUrl;
+
     @Transient
     private Set<RoleEntity> roles;
 
