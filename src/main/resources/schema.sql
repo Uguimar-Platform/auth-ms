@@ -4,7 +4,11 @@ CREATE TABLE IF NOT EXISTS users
     username VARCHAR(50) UNIQUE  NOT NULL,
     email    VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(100)        NOT NULL,
-    enabled  BOOLEAN DEFAULT TRUE
+    enabled  BOOLEAN DEFAULT TRUE,
+    first_name VARCHAR(100) NULL,
+    last_name  VARCHAR(100) NULL,
+    age        SMALLINT NULL,
+    photo_url VARCHAR(255) NULL
 );
 
 CREATE TABLE IF NOT EXISTS roles
