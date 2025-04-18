@@ -35,6 +35,9 @@ public class UserEntity implements Persistable<String> {
     @Column("enabled")
     private boolean enabled;
 
+    @Column("isVerified")
+    private boolean isVerified;
+
     @Transient
     private Set<RoleEntity> roles;
 
