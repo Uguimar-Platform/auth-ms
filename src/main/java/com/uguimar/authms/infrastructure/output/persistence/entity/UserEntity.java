@@ -29,6 +29,9 @@ public class UserEntity implements Persistable<String> {
     @Column("email")
     private String email;
 
+    @Column("user_type")
+    private UserType userType;
+
     @Column("password")
     private String password;
 
@@ -40,6 +43,9 @@ public class UserEntity implements Persistable<String> {
 
     @Transient
     private boolean isNew;
+
+
+
 
     @Override
     public boolean isNew() {

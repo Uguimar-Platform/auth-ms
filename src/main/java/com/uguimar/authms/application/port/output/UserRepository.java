@@ -4,6 +4,7 @@ import com.uguimar.authms.domain.model.User;
 import reactor.core.publisher.Mono;
 
 public interface UserRepository {
+
     Mono<User> findById(String id);
 
     Mono<User> findByUsername(String username);
