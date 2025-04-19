@@ -97,5 +97,5 @@ public class AuthController {
                     log.error("Error inesperado al refrescar token: {}", e.getMessage());
                     return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
                 });
-    }
+            }
 }
