@@ -34,8 +34,8 @@ public class UserEntity implements Persistable<String> {
 
     @Column("enabled")
     private boolean enabled;
-
-    @Column("isVerified")
+    
+    @Column("is_verified")
     private boolean isVerified;
 
     @Transient
@@ -53,9 +53,19 @@ public class UserEntity implements Persistable<String> {
         this.isNew = true;
     }
 
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
+    }
+
     public static UserEntity newUser() {
         UserEntity user = new UserEntity();
         user.setId(UUID.randomUUID().toString());
+        //user.setVerified(false); Replace with the correct logic to set verified status    
+        user.setVerified(false);
         user.markNew();
         return user;
     }

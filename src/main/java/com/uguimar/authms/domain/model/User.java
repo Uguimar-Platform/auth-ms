@@ -20,6 +20,11 @@ public class User {
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
     private boolean enabled;
+    private boolean isVerified;
+
+    public boolean isVerified() {
+        return isVerified;
+    }
 
     public boolean hasRole(String roleName) {
         return roles.stream()

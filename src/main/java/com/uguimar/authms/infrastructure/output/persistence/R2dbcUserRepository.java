@@ -141,6 +141,7 @@ public class R2dbcUserRepository implements UserRepository {
                 .password(entity.getPassword())
                 .roles(roles)
                 .enabled(entity.isEnabled())
+                .isVerified(entity.isVerified()) 
                 .build();
     }
 
@@ -151,6 +152,7 @@ public class R2dbcUserRepository implements UserRepository {
                 .email(domain.getEmail())
                 .password(domain.getPassword())
                 .enabled(domain.isEnabled())
+                .isVerified(domain.isVerified())
                 .build();
     }
 }
