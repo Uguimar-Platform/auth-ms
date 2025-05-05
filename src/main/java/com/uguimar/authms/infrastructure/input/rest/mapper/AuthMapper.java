@@ -23,7 +23,12 @@ public class AuthMapper {
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .birthDate(user.getBirthDate())
                 .message("Usuario registrado exitosamente")
+                .createdBy(user.getCreatedBy())
+                .createdDate(user.getCreatedDate())
                 .build();
     }
 

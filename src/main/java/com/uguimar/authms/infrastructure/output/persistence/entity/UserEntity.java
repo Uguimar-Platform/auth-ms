@@ -4,21 +4,23 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
 
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("users")
-public class UserEntity implements Persistable<String> {
+public class UserEntity extends AuditableEntity implements Persistable<String> {
 
     @Id
     private String id;
@@ -31,6 +33,15 @@ public class UserEntity implements Persistable<String> {
 
     @Column("password")
     private String password;
+
+    @Column("first_name")
+    private String firstName;
+
+    @Column("last_name")
+    private String lastName;
+
+    @Column("birth_date")
+    private LocalDate birthDate;
 
     @Column("enabled")
     private boolean enabled;

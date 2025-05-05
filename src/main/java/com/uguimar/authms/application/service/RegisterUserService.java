@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.time.Instant;
 import java.util.Set;
 
 @Service
@@ -31,7 +32,14 @@ public class RegisterUserService implements RegisterUserUseCase {
                     user.setPassword(passwordEncoder.encode(user.getPassword()));
                     user.setEnabled(true);
 
-                    // Asignar rol de usuario por defecto si no tiene roles
+                    // Set audit fields for new registrations
+                    Instant now = Instant.now();
+                    user.setCreatedBy("self-registration");
+                    user.setCreatedDate(now);
+                    user.setLastModifiedBy("self-registration");
+                    user.setLastModifiedDate(now);
+
+                    // Assign default user role if not set
                     if (user.getRoles() == null || user.getRoles().isEmpty()) {
                         Role userRole = Role.builder().name("USER").build();
                         user.setRoles(Set.of(userRole));

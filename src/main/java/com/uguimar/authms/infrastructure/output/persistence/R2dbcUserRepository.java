@@ -134,23 +134,45 @@ public class R2dbcUserRepository implements UserRepository {
                 .collect(Collectors.toSet())
                 : new HashSet<>();
 
-        return User.builder()
+        User user = User.builder()
                 .id(entity.getId())
                 .username(entity.getUsername())
                 .email(entity.getEmail())
                 .password(entity.getPassword())
+                .firstName(entity.getFirstName())
+                .lastName(entity.getLastName())
+                .birthDate(entity.getBirthDate())
                 .roles(roles)
                 .enabled(entity.isEnabled())
                 .build();
+
+        // Set audit fields
+        user.setCreatedBy(entity.getCreatedBy());
+        user.setCreatedDate(entity.getCreatedDate());
+        user.setLastModifiedBy(entity.getLastModifiedBy());
+        user.setLastModifiedDate(entity.getLastModifiedDate());
+
+        return user;
     }
 
     private UserEntity mapToEntity(User domain) {
-        return UserEntity.builder()
+        UserEntity entity = UserEntity.builder()
                 .id(domain.getId())
                 .username(domain.getUsername())
                 .email(domain.getEmail())
                 .password(domain.getPassword())
+                .firstName(domain.getFirstName())
+                .lastName(domain.getLastName())
+                .birthDate(domain.getBirthDate())
                 .enabled(domain.isEnabled())
                 .build();
+
+        // Set audit fields from domain if available (for updates)
+        entity.setCreatedBy(domain.getCreatedBy());
+        entity.setCreatedDate(domain.getCreatedDate());
+        entity.setLastModifiedBy(domain.getLastModifiedBy());
+        entity.setLastModifiedDate(domain.getLastModifiedDate());
+
+        return entity;
     }
 }
