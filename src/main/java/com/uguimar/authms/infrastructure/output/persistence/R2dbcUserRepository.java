@@ -144,6 +144,7 @@ public class R2dbcUserRepository implements UserRepository {
                 .birthDate(entity.getBirthDate())
                 .roles(roles)
                 .enabled(entity.isEnabled())
+                .isVerified(entity.isVerified()) 
                 .build();
 
         // Set audit fields
@@ -165,6 +166,7 @@ public class R2dbcUserRepository implements UserRepository {
                 .lastName(domain.getLastName())
                 .birthDate(domain.getBirthDate())
                 .enabled(domain.isEnabled())
+                .isVerified(domain.isVerified())
                 .build();
 
         // Set audit fields from domain if available (for updates)

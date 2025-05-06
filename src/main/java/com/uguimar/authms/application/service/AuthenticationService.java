@@ -31,6 +31,8 @@ public class AuthenticationService implements AuthenticationUseCase {
                 .switchIfEmpty(Mono.error(new AuthenticationException("Usuario no encontrado")))
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
                 .switchIfEmpty(Mono.error(new AuthenticationException("Credenciales inválidas")))
+                .filter(user -> user.isVerified())
+                .switchIfEmpty(Mono.error(new AuthenticationException("Cuenta no verificada")))
                 .flatMap(user -> {
                     String accessTokenValue = jwtProvider.generateToken(user, TokenType.ACCESS);
                     String refreshTokenValue = jwtProvider.generateToken(user, TokenType.REFRESH);
