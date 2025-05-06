@@ -7,11 +7,11 @@ CREATE TABLE IF NOT EXISTS users
     first_name         VARCHAR(100)        NOT NULL,
     last_name          VARCHAR(100)        NOT NULL,
     birth_date         DATE                NOT NULL,
-    enabled            BOOLEAN     DEFAULT TRUE,
+    enabled            BOOLEAN             NOT NULL DEFAULT TRUE,
     created_by         VARCHAR(100)        NOT NULL,
-    created_date       TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    created_date       TIMESTAMPTZ         NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_modified_by   VARCHAR(100)        NOT NULL,
-    last_modified_date TIMESTAMPTZ
+    last_modified_date TIMESTAMPTZ         NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS roles
@@ -46,8 +46,10 @@ VALUES ('1', 'ADMIN'),
 ON CONFLICT (name) DO NOTHING;
 
 -- Crear usuario admin por defecto (contraseña: admin123)
-INSERT INTO users (id, username, email, password, enabled)
-VALUES ('1', 'admin', 'admin@example.com', '$2a$10$qPjBQiKR0eB0X2e7G.ygjO7HhiIRGLGzZOq7o6QQ7lJH.Qn9QnNRO', true)
+INSERT INTO users (id, username, email, password, first_name, last_name, birth_date, enabled, created_by,
+                   last_modified_by, last_modified_date)
+VALUES ('1', 'admin', 'admin@example.com', '$2a$10$qPjBQiKR0eB0X2e7G.ygjO7HhiIRGLGzZOq7o6QQ7lJH.Qn9QnNRO',
+        'Admin', 'System', '2000-01-01', true, 'SELF-REGISTRATION', 'SELF-REGISTRATION', CURRENT_TIMESTAMP)
 ON CONFLICT (username) DO NOTHING;
 
 -- Asignar rol de admin al usuario admin
