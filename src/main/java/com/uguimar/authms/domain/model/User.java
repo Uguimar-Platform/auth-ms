@@ -1,15 +1,13 @@
 package com.uguimar.authms.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -22,6 +20,7 @@ public class User extends Auditable {
     private String firstName;
     private String lastName;
     private LocalDate birthDate;
+    private boolean verified;
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
     private boolean enabled;
