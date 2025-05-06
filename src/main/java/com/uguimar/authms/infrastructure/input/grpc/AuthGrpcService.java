@@ -4,6 +4,12 @@ import com.uguimar.authms.application.port.input.TokenValidationUseCase;
 import com.uguimar.authms.application.port.output.UserRepository;
 import com.uguimar.authms.domain.model.Role;
 import com.uguimar.authms.domain.model.User;
+import com.uguimar.authms.grpc.AuthServiceGrpc;
+import com.uguimar.authms.grpc.UserDetails;
+import com.uguimar.authms.grpc.UserDetailsRequest;
+import com.uguimar.authms.grpc.UserDetailsResponse;
+import com.uguimar.authms.grpc.ValidateTokenRequest;
+import com.uguimar.authms.grpc.ValidateTokenResponse;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -14,29 +20,29 @@ import java.util.stream.Collectors;
 @GrpcService
 @RequiredArgsConstructor
 @Log4j2
-public class AuthGrpcService extends com.uguimar.authms.grpc.AuthServiceGrpc.AuthServiceImplBase {
+public class AuthGrpcService extends AuthServiceGrpc.AuthServiceImplBase {
 
     private final TokenValidationUseCase tokenValidationUseCase;
     private final UserRepository userRepository;
 
     @Override
-    public void validateToken(com.uguimar.authms.grpc.ValidateTokenRequest request, StreamObserver<com.uguimar.authms.grpc.ValidateTokenResponse> responseObserver) {
+    public void validateToken(ValidateTokenRequest request, StreamObserver<ValidateTokenResponse> responseObserver) {
         log.debug("Validando token mediante gRPC");
         String token = request.getToken();
 
         tokenValidationUseCase.validateToken(token)
                 .map(this::mapToUserDetails)
-                .map(userDetails -> com.uguimar.authms.grpc.ValidateTokenResponse
+                .map(userDetails -> ValidateTokenResponse
                         .newBuilder()
                         .setValid(true)
                         .setUserDetails(userDetails)
                         .build()
                 )
-                .defaultIfEmpty(com.uguimar.authms.grpc.ValidateTokenResponse.newBuilder()
+                .defaultIfEmpty(ValidateTokenResponse.newBuilder()
                         .setValid(false)
                         .build()
                 )
-                .onErrorReturn(com.uguimar.authms.grpc.ValidateTokenResponse.newBuilder()
+                .onErrorReturn(ValidateTokenResponse.newBuilder()
                         .setValid(false)
                         .build()
                 )
@@ -47,7 +53,7 @@ public class AuthGrpcService extends com.uguimar.authms.grpc.AuthServiceGrpc.Aut
                         },
                         error -> {
                             log.error("Error al validar token via gRPC: {}", error.getMessage());
-                            responseObserver.onNext(com.uguimar.authms.grpc.ValidateTokenResponse.newBuilder()
+                            responseObserver.onNext(ValidateTokenResponse.newBuilder()
                                     .setValid(false)
                                     .build());
                             responseObserver.onCompleted();
@@ -56,13 +62,13 @@ public class AuthGrpcService extends com.uguimar.authms.grpc.AuthServiceGrpc.Aut
     }
 
     @Override
-    public void getUserDetails(com.uguimar.authms.grpc.UserDetailsRequest request, StreamObserver<com.uguimar.authms.grpc.UserDetailsResponse> responseObserver) {
+    public void getUserDetails(UserDetailsRequest request, StreamObserver<UserDetailsResponse> responseObserver) {
         log.debug("Obteniendo detalles de usuario mediante gRPC para id: {}", request.getUserId());
         String userId = request.getUserId();
 
         userRepository.findById(userId)
                 .map(this::mapToUserDetails)
-                .map(userDetails -> com.uguimar.authms.grpc.UserDetailsResponse.newBuilder()
+                .map(userDetails -> UserDetailsResponse.newBuilder()
                         .setUserDetails(userDetails)
                         .build()
                 )
@@ -82,8 +88,8 @@ public class AuthGrpcService extends com.uguimar.authms.grpc.AuthServiceGrpc.Aut
                 );
     }
 
-    private com.uguimar.authms.grpc.UserDetails mapToUserDetails(User user) {
-        return com.uguimar.authms.grpc.UserDetails.newBuilder()
+    private UserDetails mapToUserDetails(User user) {
+        return UserDetails.newBuilder()
                 .setId(user.getId())
                 .setUsername(user.getUsername())
                 .setEmail(user.getEmail())
