@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS users
     first_name         VARCHAR(100)        NOT NULL,
     last_name          VARCHAR(100)        NOT NULL,
     birth_date         DATE                NOT NULL,
+    verified           BOOLEAN             NOT NULL DEFAULT FALSE,
     enabled            BOOLEAN             NOT NULL DEFAULT TRUE,
     created_by         VARCHAR(100)        NOT NULL,
     created_date       TIMESTAMPTZ         NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -36,6 +37,20 @@ CREATE TABLE IF NOT EXISTS tokens
     value       TEXT UNIQUE NOT NULL,
     expiry_date TIMESTAMP   NOT NULL,
     token_type  VARCHAR(20) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS verification_tokens
+(
+    id                 VARCHAR(36) PRIMARY KEY,
+    user_id            VARCHAR(36)                           NOT NULL,
+    token              VARCHAR(10)                           NOT NULL UNIQUE,
+    expiry_date        TIMESTAMPTZ                           NOT NULL,
+    used               BOOLEAN     DEFAULT FALSE,
+    created_by         VARCHAR(100)                          NOT NULL,
+    created_date       TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_modified_by   VARCHAR(100)                          NOT NULL,
+    last_modified_date TIMESTAMPTZ                           NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
