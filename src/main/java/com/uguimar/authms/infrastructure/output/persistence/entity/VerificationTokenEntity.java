@@ -11,8 +11,7 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.LocalDate;
-import java.util.Set;
+import java.time.Instant;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
@@ -20,35 +19,23 @@ import java.util.UUID;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table("users")
-public class UserEntity extends AuditableEntity implements Persistable<String> {
+@Table("verification_tokens")
+public class VerificationTokenEntity extends AuditableEntity implements Persistable<String> {
 
     @Id
     private String id;
 
-    @Column("username")
-    private String username;
+    @Column("user_id")
+    private String userId;
 
-    @Column("email")
-    private String email;
+    @Column("token")
+    private String token;
 
-    @Column("password")
-    private String password;
+    @Column("expiry_date")
+    private Instant expiryDate;
 
-    @Column("first_name")
-    private String firstName;
-
-    @Column("last_name")
-    private String lastName;
-
-    @Column("birth_date")
-    private LocalDate birthDate;
-
-    @Column("enabled")
-    private boolean enabled;
-
-    @Transient
-    private Set<RoleEntity> roles;
+    @Column("used")
+    private boolean used;
 
     @Transient
     private boolean isNew;
@@ -62,10 +49,10 @@ public class UserEntity extends AuditableEntity implements Persistable<String> {
         this.isNew = true;
     }
 
-    public static UserEntity newUser() {
-        UserEntity user = new UserEntity();
-        user.setId(UUID.randomUUID().toString());
-        user.markNew();
-        return user;
+    public static VerificationTokenEntity newToken() {
+        VerificationTokenEntity token = new VerificationTokenEntity();
+        token.setId(UUID.randomUUID().toString());
+        token.markNew();
+        return token;
     }
 }

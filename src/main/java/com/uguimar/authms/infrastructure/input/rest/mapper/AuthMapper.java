@@ -27,6 +27,8 @@ public class AuthMapper {
                 .lastName(user.getLastName())
                 .birthDate(user.getBirthDate())
                 .message("Usuario registrado exitosamente")
+                .verified(user.isVerified())
+                .verificationMessage("Se ha enviado un código de verificación a su correo electrónico")
                 .createdBy(user.getCreatedBy())
                 .createdDate(user.getCreatedDate())
                 .build();

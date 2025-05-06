@@ -1,5 +1,6 @@
 package com.uguimar.authms.application.service;
 
+import com.uguimar.authms.application.port.input.EmailVerificationUseCase;
 import com.uguimar.authms.application.port.input.RegisterUserUseCase;
 import com.uguimar.authms.application.port.output.PasswordEncoder;
 import com.uguimar.authms.application.port.output.UserRepository;
@@ -12,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.time.Instant;
 import java.util.Set;
 
 @Service
@@ -21,6 +21,7 @@ public class RegisterUserService implements RegisterUserUseCase {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailVerificationUseCase emailVerificationUseCase;
 
     @Override
     public Mono<User> registerUser(User user) {
@@ -33,6 +34,7 @@ public class RegisterUserService implements RegisterUserUseCase {
                 .then(Mono.fromCallable(() -> {
                     user.setPassword(passwordEncoder.encode(user.getPassword()));
                     user.setEnabled(true);
+                    user.setVerified(false);
 
                     // Assign default user role if not set
                     if (user.getRoles() == null || user.getRoles().isEmpty()) {
@@ -49,6 +51,8 @@ public class RegisterUserService implements RegisterUserUseCase {
                     // Save and clear auditor
                     return userRepository.save(userToSave)
                             .doFinally(signal -> AuditingConfig.clearAuditor());
-                });
+                })
+                .flatMap(savedUser -> emailVerificationUseCase.sendVerificationCode(savedUser.getId())
+                        .thenReturn(savedUser));
     }
 }

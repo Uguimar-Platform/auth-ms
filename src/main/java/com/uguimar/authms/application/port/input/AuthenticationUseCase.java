@@ -2,7 +2,6 @@ package com.uguimar.authms.application.port.input;
 
 import com.uguimar.authms.domain.model.Token;
 import com.uguimar.authms.domain.model.TokenPair;
-
 import reactor.core.publisher.Mono;
 
 public interface AuthenticationUseCase {
