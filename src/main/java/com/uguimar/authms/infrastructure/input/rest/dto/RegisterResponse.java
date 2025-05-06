@@ -20,6 +20,8 @@ public class RegisterResponse {
     private String lastName;
     private LocalDate birthDate;
     private String message;
+    private boolean verified;
+    private String verificationMessage;
     // Audit fields
     private String createdBy;
     private Instant createdDate;
