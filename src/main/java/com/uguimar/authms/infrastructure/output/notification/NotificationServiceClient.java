@@ -27,7 +27,7 @@ public class NotificationServiceClient implements EmailService {
                         .setVerificationCode(code)
                         .build();
 
-                notificationServiceStub.sendVerificationCode(request, new io.grpc.stub.StreamObserver<VerificationCodeResponse>() {
+                notificationServiceStub.sendVerificationCode(request, new io.grpc.stub.StreamObserver<>() {
                     @Override
                     public void onNext(VerificationCodeResponse response) {
                         if (response.getSuccess()) {
