@@ -7,6 +7,7 @@ option java_package = "com.uguimar.notification.grpc";
 
 service NotificationService {
   rpc SendVerificationCode(VerificationCodeRequest) returns (VerificationCodeResponse) {}
+  rpc SendPasswordResetCode(PasswordResetCodeRequest) returns (PasswordResetCodeResponse) {}
 }
 
 message VerificationCodeRequest {
@@ -16,6 +17,17 @@ message VerificationCodeRequest {
 }
 
 message VerificationCodeResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message PasswordResetCodeRequest {
+  string email = 1;
+  string username = 2;
+  string reset_code = 3;
+}
+
+message PasswordResetCodeResponse {
   bool success = 1;
   string message = 2;
 }
