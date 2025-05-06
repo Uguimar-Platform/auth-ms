@@ -1,6 +1,7 @@
 package com.uguimar.authms.infrastructure.output.notification;
 
 import com.uguimar.authms.application.port.output.EmailService;
+import com.uguimar.authms.application.port.output.PasswordResetNotificationService;
 import com.uguimar.notification.grpc.NotificationServiceGrpc;
 import com.uguimar.notification.grpc.VerificationCodeRequest;
 import com.uguimar.notification.grpc.VerificationCodeResponse;
@@ -13,7 +14,7 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class NotificationServiceClient implements EmailService {
+public class NotificationServiceClient implements EmailService, PasswordResetNotificationService {
 
     private final NotificationServiceGrpc.NotificationServiceStub notificationServiceStub;
 
@@ -54,6 +55,45 @@ public class NotificationServiceClient implements EmailService {
                 sink.error(e);
             } catch (Exception e) {
                 log.error("Unexpected error: {}", e.getMessage());
+                sink.error(e);
+            }
+        });
+    }
+
+    @Override
+    public Mono<Boolean> sendPasswordResetCode(String email, String username, String code) {
+        return Mono.create(sink -> {
+            try {
+                PasswordResetCodeRequest request = PasswordResetCodeRequest.newBuilder()
+                        .setEmail(email)
+                        .setUsername(username)
+                        .setResetCode(code)
+                        .build();
+
+                notificationServiceStub.sendPasswordResetCode(request, new io.grpc.stub.StreamObserver<PasswordResetCodeResponse>() {
+                    @Override
+                    public void onNext(PasswordResetCodeResponse response) {
+                        if (response.getSuccess()) {
+                            sink.success(true);
+                        } else {
+                            log.error("Error sending password reset code: {}", response.getMessage());
+                            sink.success(false);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        log.error("Error in notification service: {}", t.getMessage());
+                        sink.error(t);
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        // Nothing to do
+                    }
+                });
+            } catch (Exception e) {
+                log.error("Unexpected error sending password reset code: {}", e.getMessage());
                 sink.error(e);
             }
         });
