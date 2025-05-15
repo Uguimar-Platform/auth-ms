@@ -15,6 +15,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.Set;
 
+import static com.uguimar.authms.domain.model.RoleType.STUDENT;
+
 @Service
 @RequiredArgsConstructor
 public class RegisterUserService implements RegisterUserUseCase {
@@ -38,7 +40,7 @@ public class RegisterUserService implements RegisterUserUseCase {
 
                     // Assign default user role if not set
                     if (user.getRoles() == null || user.getRoles().isEmpty()) {
-                        Role userRole = Role.builder().name("USER").build();
+                        Role userRole = Role.builder().name(STUDENT.name()).build();
                         user.setRoles(Set.of(userRole));
                     }
 
