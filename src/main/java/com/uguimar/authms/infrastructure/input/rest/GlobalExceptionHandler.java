@@ -2,6 +2,7 @@ package com.uguimar.authms.infrastructure.input.rest;
 
 import com.uguimar.authms.domain.exception.AuthenticationException;
 import com.uguimar.authms.domain.exception.InvalidTokenException;
+import com.uguimar.authms.domain.exception.ResourceNotFoundException;
 import com.uguimar.authms.domain.exception.UserAlreadyExistsException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -47,6 +48,16 @@ public class GlobalExceptionHandler {
         response.put("message", ex.getMessage());
 
         return Mono.just(ResponseEntity.status(HttpStatus.CONFLICT).body(response));
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public Mono<ResponseEntity<Map<String, String>>> handleResourceNotFoundException(ResourceNotFoundException ex) {
+        log.warn("Resource not found: {}", ex.getMessage());
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Resource not found");
+        response.put("message", ex.getMessage());
+
+        return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(response));
     }
 
     @ExceptionHandler(WebExchangeBindException.class)

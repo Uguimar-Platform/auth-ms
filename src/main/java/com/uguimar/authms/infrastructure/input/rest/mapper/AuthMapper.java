@@ -15,6 +15,9 @@ public class AuthMapper {
                 .username(registerRequest.getUsername())
                 .email(registerRequest.getEmail())
                 .password(registerRequest.getPassword())
+                .firstName(registerRequest.getFirstName())
+                .lastName(registerRequest.getLastName())
+                .birthDate(registerRequest.getBirthDate())
                 .build();
     }
 
@@ -23,7 +26,14 @@ public class AuthMapper {
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .birthDate(user.getBirthDate())
                 .message("Usuario registrado exitosamente")
+                .verified(user.isVerified())
+                .verificationMessage("Se ha enviado un código de verificación a su correo electrónico")
+                .createdBy(user.getCreatedBy())
+                .createdDate(user.getCreatedDate())
                 .build();
     }
 

@@ -1,16 +1,21 @@
 package com.uguimar.authms.application.service;
 
+import com.uguimar.authms.application.port.input.EmailVerificationUseCase;
 import com.uguimar.authms.application.port.input.RegisterUserUseCase;
 import com.uguimar.authms.application.port.output.PasswordEncoder;
 import com.uguimar.authms.application.port.output.UserRepository;
 import com.uguimar.authms.domain.exception.UserAlreadyExistsException;
+import com.uguimar.authms.domain.model.AuditActionType;
 import com.uguimar.authms.domain.model.Role;
 import com.uguimar.authms.domain.model.User;
+import com.uguimar.authms.infrastructure.config.AuditingConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.Set;
+
+import static com.uguimar.authms.domain.model.RoleType.STUDENT;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +23,7 @@ public class RegisterUserService implements RegisterUserUseCase {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailVerificationUseCase emailVerificationUseCase;
 
     @Override
     public Mono<User> registerUser(User user) {
@@ -30,15 +36,25 @@ public class RegisterUserService implements RegisterUserUseCase {
                 .then(Mono.fromCallable(() -> {
                     user.setPassword(passwordEncoder.encode(user.getPassword()));
                     user.setEnabled(true);
+                    user.setVerified(false);
 
-                    // Asignar rol de usuario por defecto si no tiene roles
+                    // Assign default user role if not set
                     if (user.getRoles() == null || user.getRoles().isEmpty()) {
-                        Role userRole = Role.builder().name("USER").build();
+                        Role userRole = Role.builder().name(STUDENT.name()).build();
                         user.setRoles(Set.of(userRole));
                     }
 
                     return user;
                 }))
-                .flatMap(userRepository::save);
+                .flatMap(userToSave -> {
+                    // Set specific auditor for this operation
+                    AuditingConfig.setAuditor(AuditActionType.SELF_REGISTRATION.getValue());
+
+                    // Save and clear auditor
+                    return userRepository.save(userToSave)
+                            .doFinally(signal -> AuditingConfig.clearAuditor());
+                })
+                .flatMap(savedUser -> emailVerificationUseCase.sendVerificationCode(savedUser.getId())
+                        .thenReturn(savedUser));
     }
 }

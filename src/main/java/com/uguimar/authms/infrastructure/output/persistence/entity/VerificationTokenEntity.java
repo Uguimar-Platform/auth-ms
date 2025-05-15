@@ -11,7 +11,7 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.util.Set;
+import java.time.Instant;
 import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
@@ -19,20 +19,23 @@ import java.util.UUID;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table("roles")
-public class RoleEntity extends AuditableEntity implements Persistable<String> {
+@Table("verification_tokens")
+public class VerificationTokenEntity extends AuditableEntity implements Persistable<String> {
 
     @Id
     private String id;
 
-    @Column("name")
-    private String name;
+    @Column("user_id")
+    private String userId;
 
-    @Column("description")
-    private String description;
+    @Column("token")
+    private String token;
 
-    @Transient
-    private Set<PermissionEntity> permissions;
+    @Column("expiry_date")
+    private Instant expiryDate;
+
+    @Column("used")
+    private boolean used;
 
     @Transient
     private boolean isNew;
@@ -46,10 +49,10 @@ public class RoleEntity extends AuditableEntity implements Persistable<String> {
         this.isNew = true;
     }
 
-    public static RoleEntity newRole() {
-        RoleEntity role = new RoleEntity();
-        role.setId(UUID.randomUUID().toString());
-        role.markNew();
-        return role;
+    public static VerificationTokenEntity newToken() {
+        VerificationTokenEntity token = new VerificationTokenEntity();
+        token.setId(UUID.randomUUID().toString());
+        token.markNew();
+        return token;
     }
 }

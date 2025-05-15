@@ -1,6 +1,9 @@
 package com.uguimar.authms.domain.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.util.HashSet;
@@ -11,10 +14,9 @@ import java.util.Set;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role extends Auditable {
+public class Module extends Auditable {
     private String id;
     private String name;
     private String description;
-    @Builder.Default
     private Set<Permission> permissions = new HashSet<>();
 }

@@ -19,8 +19,8 @@ import java.util.UUID;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table("roles")
-public class RoleEntity extends AuditableEntity implements Persistable<String> {
+@Table("modules")
+public class ModuleEntity extends AuditableEntity implements Persistable<String> {
 
     @Id
     private String id;
@@ -46,10 +46,10 @@ public class RoleEntity extends AuditableEntity implements Persistable<String> {
         this.isNew = true;
     }
 
-    public static RoleEntity newRole() {
-        RoleEntity role = new RoleEntity();
-        role.setId(UUID.randomUUID().toString());
-        role.markNew();
-        return role;
+    public static ModuleEntity newModule() {
+        ModuleEntity module = new ModuleEntity();
+        module.setId(UUID.randomUUID().toString());
+        module.markNew();
+        return module;
     }
 }
