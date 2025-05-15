@@ -29,4 +29,10 @@ public class User extends Auditable {
         return roles.stream()
                 .anyMatch(role -> role.getName().equals(roleName));
     }
+
+    public boolean hasPermission(String permissionName) {
+        return roles.stream()
+                .flatMap(role -> role.getPermissions().stream())
+                .anyMatch(permission -> permission.getName().equals(permissionName));
+    }
 }
