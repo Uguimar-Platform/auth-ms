@@ -44,6 +44,9 @@ public class UserEntity extends AuditableEntity implements Persistable<String> {
     @Column("birth_date")
     private LocalDate birthDate;
 
+    @Column("verified")
+    private boolean verified;
+
     @Column("enabled")
     private boolean enabled;
 

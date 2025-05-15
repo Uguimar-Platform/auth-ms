@@ -15,6 +15,9 @@ public class AuthMapper {
                 .username(registerRequest.getUsername())
                 .email(registerRequest.getEmail())
                 .password(registerRequest.getPassword())
+                .firstName(registerRequest.getFirstName())
+                .lastName(registerRequest.getLastName())
+                .birthDate(registerRequest.getBirthDate())
                 .build();
     }
 

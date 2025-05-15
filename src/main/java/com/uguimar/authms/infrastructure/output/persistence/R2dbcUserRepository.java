@@ -1,8 +1,10 @@
 package com.uguimar.authms.infrastructure.output.persistence;
 
 import com.uguimar.authms.application.port.output.UserRepository;
+import com.uguimar.authms.domain.model.Permission;
 import com.uguimar.authms.domain.model.Role;
 import com.uguimar.authms.domain.model.User;
+import com.uguimar.authms.infrastructure.output.persistence.entity.PermissionEntity;
 import com.uguimar.authms.infrastructure.output.persistence.entity.RoleEntity;
 import com.uguimar.authms.infrastructure.output.persistence.entity.UserEntity;
 import com.uguimar.authms.infrastructure.output.persistence.repository.R2dbcUserCrudRepository;
@@ -130,7 +132,7 @@ public class R2dbcUserRepository implements UserRepository {
     private User mapToDomain(UserEntity entity) {
         Set<Role> roles = entity.getRoles() != null
                 ? entity.getRoles().stream()
-                .map(roleEntity -> new Role(roleEntity.getId(), roleEntity.getName()))
+                .map(this::mapRoleToDomain)
                 .collect(Collectors.toSet())
                 : new HashSet<>();
 
@@ -143,6 +145,7 @@ public class R2dbcUserRepository implements UserRepository {
                 .lastName(entity.getLastName())
                 .birthDate(entity.getBirthDate())
                 .roles(roles)
+                .verified(entity.isVerified())
                 .enabled(entity.isEnabled())
                 .build();
 
@@ -153,6 +156,45 @@ public class R2dbcUserRepository implements UserRepository {
         user.setLastModifiedDate(entity.getLastModifiedDate());
 
         return user;
+    }
+
+    private Role mapRoleToDomain(RoleEntity entity) {
+        Set<Permission> permissions = entity.getPermissions() != null
+                ? entity.getPermissions().stream()
+                .map(this::mapPermissionToDomain)
+                .collect(Collectors.toSet())
+                : new HashSet<>();
+
+        Role role = Role.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .description(entity.getDescription())
+                .permissions(permissions)
+                .build();
+
+        // Set audit fields
+        role.setCreatedBy(entity.getCreatedBy());
+        role.setCreatedDate(entity.getCreatedDate());
+        role.setLastModifiedBy(entity.getLastModifiedBy());
+        role.setLastModifiedDate(entity.getLastModifiedDate());
+
+        return role;
+    }
+
+    private Permission mapPermissionToDomain(PermissionEntity entity) {
+        Permission permission = Permission.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .description(entity.getDescription())
+                .build();
+
+        // Set audit fields
+        permission.setCreatedBy(entity.getCreatedBy());
+        permission.setCreatedDate(entity.getCreatedDate());
+        permission.setLastModifiedBy(entity.getLastModifiedBy());
+        permission.setLastModifiedDate(entity.getLastModifiedDate());
+
+        return permission;
     }
 
     private UserEntity mapToEntity(User domain) {
