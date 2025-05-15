@@ -2,9 +2,7 @@ package com.uguimar.authms.infrastructure.output.notification;
 
 import com.uguimar.authms.application.port.output.EmailService;
 import com.uguimar.authms.application.port.output.PasswordResetNotificationService;
-import com.uguimar.notification.grpc.NotificationServiceGrpc;
-import com.uguimar.notification.grpc.VerificationCodeRequest;
-import com.uguimar.notification.grpc.VerificationCodeResponse;
+import com.uguimar.notification.grpc.*;
 import io.grpc.StatusRuntimeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
