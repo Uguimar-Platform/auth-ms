@@ -5,11 +5,13 @@ import com.uguimar.authms.application.port.output.EmailService;
 import com.uguimar.authms.application.port.output.UserRepository;
 import com.uguimar.authms.application.port.output.VerificationTokenRepository;
 import com.uguimar.authms.domain.exception.InvalidTokenException;
+import com.uguimar.authms.domain.exception.UserAlreadyVerifiedException;
 import com.uguimar.authms.domain.exception.UserNotFoundException;
 import com.uguimar.authms.domain.model.AuditActionType;
 import com.uguimar.authms.domain.model.User;
 import com.uguimar.authms.domain.model.VerificationToken;
 import com.uguimar.authms.infrastructure.config.AuditingConfig;
+import com.uguimar.authms.infrastructure.output.notification.KafkaNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -55,27 +57,31 @@ public class EmailVerificationService implements EmailVerificationUseCase {
     @Override
     public Mono<User> verifyEmail(String userId, String code) {
         return tokenRepository.findByUserId(userId)
-                .switchIfEmpty(Mono.error(new InvalidTokenException("No se encontró un token de verificación para este usuario")))
                 .filter(token -> !token.isUsed())
                 .switchIfEmpty(Mono.error(new InvalidTokenException("El token ya ha sido utilizado")))
                 .filter(token -> !token.isExpired())
                 .switchIfEmpty(Mono.error(new InvalidTokenException("El token ha expirado")))
                 .filter(token -> token.getToken().equals(code))
-                .switchIfEmpty(Mono.error(new InvalidTokenException("Código de verificación inválido")))
+                .switchIfEmpty(Mono.error(new InvalidTokenException("Código de verificación o ID del usuario inválidos")))
                 .flatMap(token -> {
                     // Marcar el token como usado
-                    token.setUsed(true);
-                    return tokenRepository.save(token);
-                })
-                .flatMap(token -> userRepository.findById(userId))
-                .flatMap(user -> {
-                    user.setVerified(true);
-
-                    // Establecer auditor específico para esta operación
-                    AuditingConfig.setAuditor(AuditActionType.SELF_REGISTRATION.getValue());
-
-                    return userRepository.save(user)
+                    AuditingConfig.setAuditor(AuditActionType.SYSTEM.getValue());
+                    return tokenRepository.markAsUsedByToken(code)
                             .doFinally(signal -> AuditingConfig.clearAuditor());
+                })
+                .then(Mono.defer(() -> userRepository.findById(userId)))
+                .flatMap(user -> {
+                    // Marcar el usuario como verificado
+                    AuditingConfig.setAuditor(AuditActionType.SELF_REGISTRATION.getValue());
+                    return userRepository.markAsVerifiedById(user.getId())
+                            .then(Mono.fromCallable(() -> user))
+                            .doFinally(signal -> AuditingConfig.clearAuditor());
+                })
+                .flatMap(user -> {
+                    // Enviar correo de bienvenida después de verificar
+                    return ((KafkaNotificationService) emailService)
+                            .sendWelcomeEmail(user.getEmail(), user.getUsername())
+                            .thenReturn(user);
                 });
     }
 
@@ -85,7 +91,7 @@ public class EmailVerificationService implements EmailVerificationUseCase {
                 .switchIfEmpty(Mono.error(new UserNotFoundException("Usuario no encontrado")))
                 .flatMap(user -> {
                     if (user.isVerified()) {
-                        return Mono.error(new IllegalStateException("El usuario ya está verificado"));
+                        return Mono.error(new UserAlreadyVerifiedException("El usuario ya está verificado"));
                     }
 
                     // Eliminar tokens existentes
