@@ -3,7 +3,6 @@ package com.uguimar.authms.infrastructure.input.rest;
 import com.uguimar.authms.application.port.input.AuthenticationUseCase;
 import com.uguimar.authms.application.port.input.RegisterUserUseCase;
 import com.uguimar.authms.domain.exception.AuthenticationException;
-import com.uguimar.authms.domain.exception.UserAlreadyExistsException;
 import com.uguimar.authms.infrastructure.input.rest.dto.LoginRequest;
 import com.uguimar.authms.infrastructure.input.rest.dto.LoginResponse;
 import com.uguimar.authms.infrastructure.input.rest.dto.RegisterRequest;
@@ -38,14 +37,6 @@ public class AuthController {
                             .tokenType("Bearer")
                             .build();
                     return ResponseEntity.ok(response);
-                })
-                .onErrorResume(AuthenticationException.class, e -> {
-                    log.error("Error de autenticación: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
-                })
-                .onErrorResume(e -> {
-                    log.error("Error inesperado durante login: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
                 });
     }
 
@@ -54,15 +45,7 @@ public class AuthController {
         return registerUserUseCase.registerUser(authMapper.mapToUser(request))
                 .map(user -> ResponseEntity
                         .status(HttpStatus.CREATED)
-                        .body(authMapper.mapToRegisterResponse(user)))
-                .onErrorResume(UserAlreadyExistsException.class, e -> {
-                    log.error("Error de registro: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.CONFLICT).build());
-                })
-                .onErrorResume(e -> {
-                    log.error("Error inesperado durante registro: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
-                });
+                        .body(authMapper.mapToRegisterResponse(user)));
     }
 
     @PostMapping("/logout")
