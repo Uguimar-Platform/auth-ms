@@ -15,4 +15,6 @@ public interface UserRepository {
     Mono<Boolean> existsByUsername(String username);
 
     Mono<Boolean> existsByEmail(String email);
+
+    Mono<Void> markAsVerifiedById(String id);
 }

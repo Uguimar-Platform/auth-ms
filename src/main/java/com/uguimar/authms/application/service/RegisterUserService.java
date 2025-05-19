@@ -38,7 +38,7 @@ public class RegisterUserService implements RegisterUserUseCase {
                     user.setEnabled(true);
                     user.setVerified(false);
 
-                    // Assign default user role if not set
+                    // Assign default student role if not set
                     if (user.getRoles() == null || user.getRoles().isEmpty()) {
                         Role userRole = Role.builder().name(STUDENT.name()).build();
                         user.setRoles(Set.of(userRole));
