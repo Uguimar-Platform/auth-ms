@@ -1,9 +1,6 @@
 package com.uguimar.authms.infrastructure.input.rest;
 
-import com.uguimar.authms.domain.exception.AuthenticationException;
-import com.uguimar.authms.domain.exception.InvalidTokenException;
-import com.uguimar.authms.domain.exception.ResourceNotFoundException;
-import com.uguimar.authms.domain.exception.UserAlreadyExistsException;
+import com.uguimar.authms.domain.exception.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -55,6 +52,26 @@ public class GlobalExceptionHandler {
         log.warn("Resource not found: {}", ex.getMessage());
         Map<String, String> response = new HashMap<>();
         response.put("error", "Resource not found");
+        response.put("message", ex.getMessage());
+
+        return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(response));
+    }
+
+    @ExceptionHandler(UserAlreadyVerifiedException.class)
+    public Mono<ResponseEntity<Map<String, String>>> handleUserAlreadyVerifiedException(UserAlreadyVerifiedException ex) {
+        log.error("Usuario ya verificado: {}", ex.getMessage());
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Error de verificación");
+        response.put("message", ex.getMessage());
+
+        return Mono.just(ResponseEntity.status(HttpStatus.CONFLICT).body(response));
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public Mono<ResponseEntity<Map<String, String>>> handleUserNotFoundException(UserNotFoundException ex) {
+        log.error("Usuario no encontrado: {}", ex.getMessage());
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Error al buscar usuario");
         response.put("message", ex.getMessage());
 
         return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(response));

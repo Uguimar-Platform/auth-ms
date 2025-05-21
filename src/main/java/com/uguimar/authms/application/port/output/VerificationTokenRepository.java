@@ -11,4 +11,6 @@ public interface VerificationTokenRepository {
     Mono<VerificationToken> findByUserId(String userId);
 
     Mono<Void> deleteByUserId(String userId);
+
+    Mono<Void> markAsUsedByToken(String token);
 }

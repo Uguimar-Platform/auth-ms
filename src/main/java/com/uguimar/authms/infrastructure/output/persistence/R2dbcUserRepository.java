@@ -80,6 +80,11 @@ public class R2dbcUserRepository implements UserRepository {
         return userRepository.existsByEmail(email);
     }
 
+    @Override
+    public Mono<Void> markAsVerifiedById(String id) {
+        return userRepository.markAsVerifiedById(id);
+    }
+
     private Mono<UserEntity> enrichUserWithRoles(UserEntity user) {
         return Flux.from(databaseClient.sql(
                                 "SELECT r.id, r.name FROM roles r " +

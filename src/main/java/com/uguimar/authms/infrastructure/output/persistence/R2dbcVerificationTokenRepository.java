@@ -46,6 +46,11 @@ public class R2dbcVerificationTokenRepository implements VerificationTokenReposi
         return tokenRepository.deleteByUserId(userId);
     }
 
+    @Override
+    public Mono<Void> markAsUsedByToken(String token) {
+        return tokenRepository.markAsUsedByToken(token);
+    }
+
     private VerificationToken mapToDomain(VerificationTokenEntity entity) {
         VerificationToken token = VerificationToken.builder()
                 .id(entity.getId())
