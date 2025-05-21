@@ -17,4 +17,6 @@ public interface UserRepository {
     Mono<Boolean> existsByEmail(String email);
 
     Mono<Void> markAsVerifiedById(String id);
+
+    Mono<User> updatePassword(String userId, String encodedPassword);
 }

@@ -1,6 +1,8 @@
 package com.uguimar.authms.infrastructure.output.persistence;
 
 import com.uguimar.authms.application.port.output.UserRepository;
+import com.uguimar.authms.domain.exception.UserNotFoundException;
+import com.uguimar.authms.domain.model.AuditActionType;
 import com.uguimar.authms.domain.model.Permission;
 import com.uguimar.authms.domain.model.Role;
 import com.uguimar.authms.domain.model.User;
@@ -83,6 +85,27 @@ public class R2dbcUserRepository implements UserRepository {
     @Override
     public Mono<Void> markAsVerifiedById(String id) {
         return userRepository.markAsVerifiedById(id);
+    }
+
+    @Override
+    public Mono<User> updatePassword(String userId, String encodedPassword) {
+        // Usamos SQL directo para actualizar solo el campo de contraseña
+        return databaseClient.sql(
+                        "UPDATE users SET password = :password, last_modified_by = :modifiedBy, last_modified_date = CURRENT_TIMESTAMP WHERE id = :id")
+                .bind("password", encodedPassword)
+                .bind("modifiedBy", AuditActionType.SYSTEM.getValue())
+                .bind("id", userId)
+                .fetch()
+                .rowsUpdated()
+                .flatMap(rowsUpdated -> {
+                    if (rowsUpdated > 0) {
+                        // Si se actualizó correctamente, retornamos el usuario actualizado
+                        return findById(userId);
+                    } else {
+                        // Si no se actualizó ninguna fila, el usuario probablemente no existe
+                        return Mono.error(new UserNotFoundException("Usuario no encontrado con ID: " + userId));
+                    }
+                });
     }
 
     private Mono<UserEntity> enrichUserWithRoles(UserEntity user) {
