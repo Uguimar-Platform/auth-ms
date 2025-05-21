@@ -66,7 +66,31 @@ public class KafkaNotificationService implements EmailService, PasswordResetNoti
         });
     }
 
-    // New method to send welcome email
+    /**
+     * Envía un evento para notificar que una contraseña ha sido restablecida exitosamente
+     */
+    public Mono<Boolean> sendPasswordResetConfirmation(String email, String username) {
+        return Mono.fromCallable(() -> {
+            try {
+                Map<String, String> event = Map.of(
+                        "email", email,
+                        "username", username,
+                        "type", "confirmation"  // Indicamos que es una confirmación
+                );
+
+                String payload = objectMapper.writeValueAsString(event);
+                kafkaTemplate.send(passwordResetTopic, email, payload);
+
+                log.info("Password reset confirmation event sent for user: {}", username);
+                return true;
+            } catch (Exception e) {
+                log.error("Failed to send password reset confirmation event: {}", e.getMessage());
+                return false;
+            }
+        });
+    }
+
+    // Método para enviar correo de bienvenida
     public Mono<Boolean> sendWelcomeEmail(String email, String username) {
         return Mono.fromCallable(() -> {
             try {

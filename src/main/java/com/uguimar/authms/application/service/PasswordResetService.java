@@ -11,6 +11,7 @@ import com.uguimar.authms.domain.model.AuditActionType;
 import com.uguimar.authms.domain.model.PasswordResetToken;
 import com.uguimar.authms.domain.model.User;
 import com.uguimar.authms.infrastructure.config.AuditingConfig;
+import com.uguimar.authms.infrastructure.output.notification.KafkaNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -64,22 +65,30 @@ public class PasswordResetService implements PasswordResetUseCase {
                 .switchIfEmpty(Mono.error(new InvalidTokenException("Código de restablecimiento inválido")))
                 .flatMap(valid -> tokenRepository.findByUserId(userId))
                 .flatMap(token -> {
-                    // Set the token as used
-                    token.setUsed(true);
-                    return tokenRepository.save(token);
-                })
-                .flatMap(token -> userRepository.findById(userId))
-                .flatMap(user -> {
-                    // Update the user's password
-                    user.setPassword(passwordEncoder.encode(newPassword));
-
-                    // Set the auditor for this operation
+                    // Marcar el token como usado
                     AuditingConfig.setAuditor(AuditActionType.SYSTEM.getValue());
-
-                    return userRepository.save(user)
+                    return tokenRepository.markAsUsedByToken(code)
                             .doFinally(signal -> AuditingConfig.clearAuditor());
                 })
-                .map(user -> true);
+                .then(Mono.defer(() -> {
+                    // Codificar la nueva contraseña
+                    String encodedPassword = passwordEncoder.encode(newPassword);
+
+                    // Establecer el auditor para esta operación
+                    AuditingConfig.setAuditor(AuditActionType.SYSTEM.getValue());
+
+                    // Usar el método específico para actualizar solo la contraseña
+                    return userRepository.updatePassword(userId, encodedPassword)
+                            .doFinally(signal -> AuditingConfig.clearAuditor());
+                }))
+                // Enviar correo de confirmación después de actualizar la contraseña
+                .flatMap(user -> {
+                    KafkaNotificationService kafkaService = (KafkaNotificationService) notificationService;
+                    return kafkaService.sendPasswordResetConfirmation(user.getEmail(), user.getUsername())
+                            .thenReturn(user);
+                })
+                .map(user -> true)
+                .doOnSuccess(success -> log.info("Password reset successful, confirmation email sent."));
     }
 
     private Mono<PasswordResetToken> generateAndSaveToken(User user) {
