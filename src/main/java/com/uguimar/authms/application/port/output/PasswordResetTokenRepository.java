@@ -11,4 +11,6 @@ public interface PasswordResetTokenRepository {
     Mono<PasswordResetToken> findByUserId(String userId);
 
     Mono<Void> deleteByUserId(String userId);
+
+    Mono<Void> markAsUsedByToken(String token);
 }
