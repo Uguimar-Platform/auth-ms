@@ -8,6 +8,7 @@ import com.uguimar.authms.domain.exception.AuthenticationException;
 import com.uguimar.authms.domain.model.Token;
 import com.uguimar.authms.domain.model.TokenPair;
 import com.uguimar.authms.domain.model.TokenType;
+import com.uguimar.authms.domain.model.User;
 import com.uguimar.authms.infrastructure.output.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,9 +29,10 @@ public class AuthenticationService implements AuthenticationUseCase {
     @Override
     public Mono<TokenPair> login(String username, String password) {
         return userRepository.findByUsername(username)
-                .switchIfEmpty(Mono.error(new AuthenticationException("Usuario no encontrado")))
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
-                .switchIfEmpty(Mono.error(new AuthenticationException("Credenciales inválidas")))
+                .switchIfEmpty(Mono.error(new AuthenticationException("Usuario o contraseña inválidos")))
+                .filter(User::isVerified)
+                .switchIfEmpty(Mono.error(new AuthenticationException("Usuario no verificado")))
                 .flatMap(user -> {
                     String accessTokenValue = jwtProvider.generateToken(user, TokenType.ACCESS);
                     String refreshTokenValue = jwtProvider.generateToken(user, TokenType.REFRESH);

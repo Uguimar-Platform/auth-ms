@@ -14,4 +14,8 @@ public interface R2dbcVerificationTokenCrudRepository extends ReactiveCrudReposi
     @Modifying
     @Query("DELETE FROM verification_tokens WHERE user_id = :userId")
     Mono<Void> deleteByUserId(String userId);
+
+    @Modifying
+    @Query("UPDATE verification_tokens SET used = true WHERE token = :token")
+    Mono<Void> markAsUsedByToken(String token);
 }
