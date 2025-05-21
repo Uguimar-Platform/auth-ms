@@ -46,6 +46,11 @@ public class R2dbcPasswordResetTokenRepository implements PasswordResetTokenRepo
         return tokenRepository.deleteByUserId(userId);
     }
 
+    @Override
+    public Mono<Void> markAsUsedByToken(String token) {
+        return tokenRepository.markAsUsedByToken(token);
+    }
+
     private PasswordResetToken mapToDomain(PasswordResetTokenEntity entity) {
         PasswordResetToken token = PasswordResetToken.builder()
                 .id(entity.getId())

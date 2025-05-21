@@ -14,4 +14,8 @@ public interface R2dbcPasswordResetTokenCrudRepository extends ReactiveCrudRepos
     @Modifying
     @Query("DELETE FROM password_reset_tokens WHERE user_id = :userId")
     Mono<Void> deleteByUserId(String userId);
+
+    @Modifying
+    @Query("UPDATE password_reset_tokens SET used = true, last_modified_by = 'SYSTEM', last_modified_date = CURRENT_TIMESTAMP WHERE token = :token")
+    Mono<Void> markAsUsedByToken(String token);
 }
