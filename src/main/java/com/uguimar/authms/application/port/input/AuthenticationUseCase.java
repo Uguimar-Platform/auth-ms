@@ -10,4 +10,6 @@ public interface AuthenticationUseCase {
     Mono<Token> refreshToken(String refreshToken);
 
     Mono<Void> logout(String token);
+    
+    Mono<Void> revokeToken(String token);
 }
